@@ -291,7 +291,7 @@ $LB20NonBreaks = [$LB18NonBreaks - $CB];
 #             Originally added as a Finnish tailoring, now promoted to default ICU behavior.
 #             Note: this is not default UAX-14 behaviour. See issue ICU-8151.
 #
-^($HY | $HH) $CM* $ALPlus;
+# ^($HY | $HH) $CM* $ALPlus;
 
 # LB 21        x   (BA | HY | NS)
 #           BB x
@@ -341,8 +341,22 @@ $PR $CM* ($ID | $EB | $EM);
 #
 # LB 25   Numbers.
 #
-(($PR | $PO) $CM*)? (($OP | $HY) $CM*)? ($IS $CM*)? $NU ($CM* ($NU | $SY | $IS))*
-    ($CM* ($CL | $CP))? ($CM* ($PR | $PO))?;
+# (($PR | $PO) $CM*)? (($OP | $HY) $CM*)? ($IS $CM*)? $NU ($CM* ($NU | $SY | $IS))*
+#    ($CM* ($CL | $CP))? ($CM* ($PR | $PO))?;
+$CL $CM* $PO;
+$CP $CM* $PO;
+$CL $CM* $PR;
+$CP $CM* $PR;
+$NU $CM* $PO;
+$NU $CM* $PR;
+$PO $CM* $OP;
+$PO $CM* $NU;
+$PR $CM* $OP;
+$PR $CM* $NU;
+$HY $CM* $NU;
+$IS $CM* $NU;
+$NU $CM* $NU;
+$SY $CM* $NU;
 
 # LB 26  Do not break a Korean syllable
 #

@@ -3048,34 +3048,6 @@ int32_t RBBILineMonkey::next(int32_t startPos) {
         }
 
 
-        //          Move this test up, before LB8a, because numbers can match a longer sequence that would
-        //          also match 8a.  e.g. NU ZWJ IS PO     (ZWJ acts like CM)
-        if (fNumberMatcher->lookingAt(prevPos, status)) {
-            if (U_FAILURE(status)) {
-                setAppliedRule(pos, "LB 25 Numbers");
-                break;
-            }
-            // Matched a number.  But could have been just a single digit, which would
-            //    not represent a "no break here" between prevChar and thisChar
-            int32_t numEndIdx = fNumberMatcher->end(status);  // idx of first char following num
-            if (numEndIdx > pos) {
-                // Number match includes at least our two chars being checked
-                if (numEndIdx > nextPos) {
-                    // Number match includes additional chars.  Update pos and nextPos
-                    //   so that next loop iteration will continue at the end of the number,
-                    //   checking for breaks between last char in number & whatever follows.
-                    pos = nextPos = numEndIdx;
-                    do {
-                        pos = fText->moveIndex32(pos, -1);
-                        thisChar = fText->char32At(pos);
-                    } while (fCM->contains(thisChar));
-                }
-                setAppliedRule(pos, "LB 25 Numbers");
-                continue;
-            }
-        }
-
-
         //       The monkey test's way of ignoring combining characters doesn't work
         //       for this rule. ZJ is also a CM. Need to get the actual character
         //       preceding "thisChar", not ignoring combining marks, possibly ZJ.
@@ -3264,6 +3236,7 @@ int32_t RBBILineMonkey::next(int32_t startPos) {
             break;
         }
 
+#if 0
         //           Don't break between Hyphens and letters if a break precedes the hyphen.
         //           Formerly this was a Finnish tailoring.
         //           Moved to root in ICU 63. This is an ICU customization, not in UAX-14.
@@ -3273,6 +3246,7 @@ int32_t RBBILineMonkey::next(int32_t startPos) {
             setAppliedRule(pos, "LB 20.09");
             continue;
         }
+#endif
 
         if (fBA->contains(thisChar) ||
             fHY->contains(thisChar) ||
@@ -3335,6 +3309,24 @@ int32_t RBBILineMonkey::next(int32_t startPos) {
         if ((fAL->contains(prevChar) || fHL->contains(prevChar)) &&
                 (fPR->contains(thisChar) || fPO->contains(thisChar))) {
             setAppliedRule(pos, "LB 24 no break between prefix and letters or ideographs");
+            continue;
+        }
+
+        if ((fCL->contains(prevChar) && fPO->contains(thisChar)) ||
+            (fCP->contains(prevChar) && fPO->contains(thisChar)) ||
+            (fCL->contains(prevChar) && fPR->contains(thisChar)) ||
+            (fCP->contains(prevChar) && fPR->contains(thisChar)) ||
+            (fNU->contains(prevChar) && fPO->contains(thisChar)) ||
+            (fNU->contains(prevChar) && fPR->contains(thisChar)) ||
+            (fPO->contains(prevChar) && fOP->contains(thisChar)) ||
+            (fPO->contains(prevChar) && fNU->contains(thisChar)) ||
+            (fPR->contains(prevChar) && fOP->contains(thisChar)) ||
+            (fPR->contains(prevChar) && fNU->contains(thisChar)) ||
+            (fHY->contains(prevChar) && fNU->contains(thisChar)) ||
+            (fIS->contains(prevChar) && fNU->contains(thisChar)) ||
+            (fNU->contains(prevChar) && fNU->contains(thisChar)) ||
+            (fSY->contains(prevChar) && fNU->contains(thisChar))) {
+            setAppliedRule(pos, "LB 25 Do not break between the following pairs of classes relevant to numbers");
             continue;
         }
 
