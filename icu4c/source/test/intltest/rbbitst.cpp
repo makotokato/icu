@@ -1986,7 +1986,11 @@ RBBIWordMonkey::RBBIWordMonkey()
     // Extend overlapping with something else is messy.
     // For Unicode 13, we chose to keep U+16FF0 & U+16FF1
     // in $Han (for $dictionary) and out of $Extend.
+#if 0
     fExtendSet        = new UnicodeSet(u"[\\p{Word_Break = Extend}-[:Hani:]]", status);
+#else
+    fExtendSet        = new UnicodeSet(u"[\\p{Word_Break = Extend}-[[:Hani:] [:LineBreak=Complex_Context:]]]", status);
+#endif
     fWSegSpaceSet     = new UnicodeSet(u"[\\p{Word_Break = WSegSpace}]",    status);
 
     fZWJSet           = new UnicodeSet(u"[\\p{Word_Break = ZWJ}]",          status);
