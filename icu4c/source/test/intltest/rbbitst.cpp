@@ -2078,7 +2078,11 @@ RBBIWordMonkey::RBBIWordMonkey()
     partition.emplace_back("CR", UnicodeSet(uR"([\p{Word_Break=CR}])", status));
     partition.emplace_back("LF", UnicodeSet(uR"([\p{Word_Break=LF}])", status));
     partition.emplace_back("Newline", UnicodeSet(uR"([\p{Word_Break=Newline}])", status));
+#if 1
+    partition.emplace_back("Extend", UnicodeSet(uR"([\p{Word_Break=Extend}-[[:Hani:] [:LineBreak=Complex_Context:]]])", status));
+#else
     partition.emplace_back("Extend", UnicodeSet(uR"([\p{Word_Break=Extend}])", status));
+#endif
     partition.emplace_back("Format", UnicodeSet(uR"([[\p{Word_Break=Format}]])", status));
     partition.emplace_back("Katakana", UnicodeSet(uR"([\p{Word_Break=Katakana}])", status));
     partition.emplace_back("ALetter_ExtPict", UnicodeSet(uR"([\p{Word_Break=ALetter}&\p{Extended_Pictographic}])", status));
